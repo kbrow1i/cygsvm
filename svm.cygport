@@ -1,0 +1,39 @@
+ORIG_PN="libsvm"
+NAME="svm"
+VERSION=3.20
+RELEASE=1
+
+HOMEPAGE="http://www.csie.ntu.edu.tw/~cjlin/libsvm/"
+SUMMARY="A Library for Support Vector Machines"
+DESCRIPTION="LIBSVM is an integrated software for support vector classification,
+(C-SVC, nu-SVC), regression (epsilon-SVR, nu-SVR) and distribution
+estimation (one-class SVM).  It supports multi-class classification."
+
+PKG_NAMES="${PN} lib${PN}2 lib${PN}-devel"
+
+svm_CATEGORY="Science"
+libsvm2_CATEGORY="Science Libs"
+libsvm_devel_CATEGORY="Science Devel"
+
+svm_CONTENTS="usr/bin/*.exe usr/share"
+libsvm2_CONTENTS="usr/bin/cygsvm-2.dll"
+libsvm_devel_CONTENTS="usr/include usr/lib"
+
+SRC_URI="${HOMEPAGE}/${ORIG_PN}-${PV}.tar.gz"
+
+PATCH_URI="Makefile.patch"
+
+HTMLDOCS="FAQ.html"
+
+src_compile() {
+    lndirs
+    cd ${B}
+    cygmake
+}
+
+src_install() {
+    cd ${B}
+    dobin cygsvm-2.dll *.exe
+    dolib libsvm.dll.a
+    doinclude svm.h
+}

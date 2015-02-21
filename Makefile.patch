@@ -1,0 +1,39 @@
+--- origsrc/libsvm-3.20/Makefile	2014-11-14 17:51:53.000000000 -0500
++++ src/libsvm-3.20/Makefile	2015-02-21 11:33:13.963593000 -0500
+@@ -2,24 +2,26 @@ CXX ?= g++
+ CFLAGS = -Wall -Wconversion -O3 -fPIC
+ SHVER = 2
+ OS = $(shell uname)
++EXEEXT = .exe
+ 
+-all: svm-train svm-predict svm-scale
++all: lib svm-train$(EXEEXT) svm-predict$(EXEEXT) svm-scale$(EXEEXT)
+ 
+ lib: svm.o
+ 	if [ "$(OS)" = "Darwin" ]; then \
+ 		SHARED_LIB_FLAG="-dynamiclib -Wl,-install_name,libsvm.so.$(SHVER)"; \
+ 	else \
+-		SHARED_LIB_FLAG="-shared -Wl,-soname,libsvm.so.$(SHVER)"; \
++		SHARED_LIB_FLAG="-shared -Wl,--enable-auto-import -Wl,--out-implib=libsvm.dll.a"; \
+ 	fi; \
+-	$(CXX) $${SHARED_LIB_FLAG} svm.o -o libsvm.so.$(SHVER)
++	$(CXX) $(CXXFLAGS) $${SHARED_LIB_FLAG} svm.o -o cygsvm-$(SHVER).dll
+ 
+-svm-predict: svm-predict.c svm.o
+-	$(CXX) $(CFLAGS) svm-predict.c svm.o -o svm-predict -lm
+-svm-train: svm-train.c svm.o
+-	$(CXX) $(CFLAGS) svm-train.c svm.o -o svm-train -lm
+-svm-scale: svm-scale.c
+-	$(CXX) $(CFLAGS) svm-scale.c -o svm-scale
++LIBS = -L. -lsvm
++svm-predict$(EXEEXT): svm-predict.c lib
++	$(CXX) $(CXXLAGS) svm-predict.c -o svm-predict $(LIBS) -lm
++svm-train$(EXEEXT): svm-train.c lib
++	$(CXX) $(CXXFLAGS) svm-train.c -o svm-train $(LIBS) -lm
++svm-scale$(EXEEXT): svm-scale.c
++	$(CXX) $(CXXFLAGS) svm-scale.c -o svm-scale
+ svm.o: svm.cpp svm.h
+-	$(CXX) $(CFLAGS) -c svm.cpp
++	$(CXX) $(CXXFLAGS) -c svm.cpp
+ clean:
+ 	rm -f *~ svm.o svm-train svm-predict svm-scale libsvm.so.$(SHVER)
