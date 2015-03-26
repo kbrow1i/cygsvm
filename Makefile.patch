@@ -27,7 +27,7 @@
 -	$(CXX) $(CFLAGS) svm-scale.c -o svm-scale
 +LIBS = -L. -lsvm
 +svm-predict$(EXEEXT): svm-predict.c lib
-+	$(CXX) $(CXXLAGS) svm-predict.c -o svm-predict $(LIBS) -lm
++	$(CXX) $(CXXFLAGS) svm-predict.c -o svm-predict $(LIBS) -lm
 +svm-train$(EXEEXT): svm-train.c lib
 +	$(CXX) $(CXXFLAGS) svm-train.c -o svm-train $(LIBS) -lm
 +svm-scale$(EXEEXT): svm-scale.c
